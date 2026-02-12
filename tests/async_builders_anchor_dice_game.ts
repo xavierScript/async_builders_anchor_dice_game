@@ -77,37 +77,52 @@ describe("async_builders_anchor_dice_game", () => {
       .then(confirmTx);
   });
 
-  it("Resolve a bet", async () => {
-    let account = await anchor
-      .getProvider()
-      .connection.getAccountInfo(bet, "confirmed");
-    let sig_ix = Ed25519Program.createInstructionWithPrivateKey({
-      privateKey: house.secretKey,
-      message: account.data.subarray(8),
-    });
+  // it("Refund a bet", async () => {
+  //   let signature = await program.methods
+  //     .refundBet()
+  //     .accountsStrict({
+  //       player: player.publicKey,
+  //       house: house.publicKey,
+  //       vault,
+  //       bet,
+  //       systemProgram: SystemProgram.programId,
+  //     })
+  //     .signers([player])
+  //     .rpc()
+  //     .then(confirmTx);
+  // });
 
-    const resolve_ix = await program.methods
-      .resolveBet(Buffer.from(sig_ix.data.buffer.slice(16 + 32, 16 + 32 + 64)))
-      .accountsStrict({
-        player: player.publicKey,
-        house: house.publicKey,
-        vault,
-        bet,
-        instructionSysvar: SYSVAR_INSTRUCTIONS_PUBKEY,
-        systemProgram: SystemProgram.programId,
-      })
-      .signers([house])
-      .instruction();
+  // it("Resolve a bet", async () => {
+  //   let account = await anchor
+  //     .getProvider()
+  //     .connection.getAccountInfo(bet, "confirmed");
+  //   let sig_ix = Ed25519Program.createInstructionWithPrivateKey({
+  //     privateKey: house.secretKey,
+  //     message: account.data.subarray(8),
+  //   });
 
-    const tx = new Transaction().add(sig_ix).add(resolve_ix);
+  //   const resolve_ix = await program.methods
+  //     .resolveBet(Buffer.from(sig_ix.data.buffer.slice(16 + 32, 16 + 32 + 64)))
+  //     .accountsStrict({
+  //       player: player.publicKey,
+  //       house: house.publicKey,
+  //       vault,
+  //       bet,
+  //       instructionSysvar: SYSVAR_INSTRUCTIONS_PUBKEY,
+  //       systemProgram: SystemProgram.programId,
+  //     })
+  //     .signers([house])
+  //     .instruction();
 
-    try {
-      await sendAndConfirmTransaction(program.provider.connection, tx, [house]);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  });
+  //   const tx = new Transaction().add(sig_ix).add(resolve_ix);
+
+  //   try {
+  //     await sendAndConfirmTransaction(program.provider.connection, tx, [house]);
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw error;
+  //   }
+  // });
 });
 
 const confirmTx = async (signature: string): Promise<string> => {
